@@ -31,7 +31,7 @@
       position: relative;
     }
 
-    /* แสง Ambient อุ่นๆ พื้นหลัง */
+    /* แสง Ambient พื้นหลัง */
     .ambient-glow {
       position: absolute;
       width: 380px;
@@ -49,7 +49,7 @@
       100% { transform: scale(1.15) translate(20px, 20px); }
     }
 
-    /* Container แชทการ์ดทรงโมเดิร์น */
+    /* Container แชทการ์ด */
     .chat-card {
       position: relative;
       z-index: 1;
@@ -170,22 +170,23 @@
     /* Messages Area */
     .chat-messages {
       flex: 1;
-      padding: 22px 18px;
+      padding: 20px 14px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       scroll-behavior: smooth;
     }
 
-    /* Spring Pop-in Animation สำหรับข้อความ */
+    /* Msg Item พร้อมรูปโปรไฟล์ */
     .msg-item {
-      max-width: 82%;
+      max-width: 88%;
       display: flex;
-      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
       opacity: 0;
-      transform: translateY(22px) scale(0.85);
-      animation: springBounce 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      transform: translateY(20px) scale(0.9);
+      animation: springBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
     @keyframes springBounce {
@@ -197,28 +198,49 @@
 
     .msg-item.incoming {
       align-self: flex-start;
+      flex-direction: row;
     }
 
     .msg-item.outgoing {
       align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    /* รูปอวาตาร์จิ๋วข้างแชท */
+    .chat-avatar-mini {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1.5px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .msg-content-wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .outgoing .msg-content-wrapper {
+      align-items: flex-end;
     }
 
     /* Bubble Styles */
     .msg-bubble {
-      padding: 13px 18px;
-      border-radius: 24px;
-      font-size: 0.96rem;
-      line-height: 1.55;
+      padding: 12px 16px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      line-height: 1.5;
       word-break: break-word;
       position: relative;
-      letter-spacing: 0.2px;
     }
 
     .incoming .msg-bubble {
       background: #ffffff;
       color: #2f3542;
-      border-bottom-left-radius: 6px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04), 
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04), 
                   0 1px 3px rgba(255, 143, 163, 0.1);
       border: 1px solid rgba(255, 220, 227, 0.8);
     }
@@ -226,15 +248,15 @@
     .outgoing .msg-bubble {
       background: linear-gradient(135deg, #ff6b81 0%, #ff8fa3 100%);
       color: #ffffff;
-      border-bottom-right-radius: 6px;
-      box-shadow: 0 8px 22px rgba(255, 107, 129, 0.32);
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 6px 18px rgba(255, 107, 129, 0.28);
     }
 
     .msg-time {
       font-size: 0.68rem;
       color: #a4b0be;
       margin-top: 4px;
-      padding: 0 6px;
+      padding: 0 4px;
     }
 
     .outgoing .msg-time {
@@ -254,6 +276,7 @@
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
       border: 1px solid rgba(255, 220, 227, 0.8);
       width: fit-content;
+      margin-left: 42px;
       animation: springBounce 0.3s ease-out forwards;
     }
 
@@ -373,7 +396,7 @@
     <div class="chat-header">
       <div class="profile-wrap">
         <div class="avatar-box">
-          <img class="avatar-img" id="ohmAvatar" src="https://cdn.discordapp.com/attachments/1467039291678003301/1544041577700270233/IMG_2601.jpg?ex=6a971047&is=6a95bec7&hm=81c221a9bc437935b70c991b4b031638f83ba369cf4f187b9013947d9e90c304&" alt="Ohm" />
+          <img class="avatar-img" id="ohmAvatarHeader" src="" alt="Ohm" />
           <div class="online-indicator"></div>
         </div>
         <div class="user-info">
@@ -413,8 +436,16 @@
   </div>
 
   <script>
-    // ⚙️ DISCORD WEBHOOK URL
+    // ====================================================
+    // ⚙️ แปะลิงก์รูปโอมและฝนที่นี่ (แก้ลิงก์รูปฝนตรงนี้ได้เลย)
+    // ====================================================
+    const OHM_AVATAR_URL = "https://cdn.discordapp.com/attachments/1467039291678003301/1544041577700270233/IMG_2601.jpg?ex=6a971047&is=6a95bec7&hm=81c221a9bc437935b70c991b4b031638f83ba369cf4f187b9013947d9e90c304&";
+    const FON_AVATAR_URL = "https://cdn.discordapp.com/attachments/1467039291678003301/1544041624097521674/image.png?ex=6a971052&is=6a95bed2&hm=36dd8062d1c8d2dd44c01b924c1ebcf7db95e6f29129ee3e120884748e1ac4a3&"; // 👈 วางลิงก์รูปฝนตรงนี้
+
     const DISCORD_WEBHOOK_URL = "https://canary.discord.com/api/webhooks/1539201967316803615/cJlf0dEH9ZErIcUXIuKQFCZDAnnZh3hf2d2Q_dRADjZRRS8lNKopOCVtS4UXLU98cU1E";
+
+    // กำหนดรูปโอมที่ Header
+    document.getElementById('ohmAvatarHeader').src = OHM_AVATAR_URL;
 
     const chatList = document.getElementById('chatList');
     const typing = document.getElementById('typing');
@@ -460,21 +491,26 @@
     window.addEventListener('click', enableAudioOnFirstTouch);
     window.addEventListener('touchstart', enableAudioOnFirstTouch);
 
-    // เลื่อนหน้าจอลงล่างสุดแบบนุ่มนวล
     function scrollToBottom() {
       setTimeout(() => {
         chatList.scrollTop = chatList.scrollHeight;
       }, 60);
     }
 
-    // เพิ่มข้อความในแชท
+    // ฟังก์ชันเพิ่มข้อความพร้อมอวาตาร์โอมหรือฝน
     function addMessage(text, type = 'incoming') {
       const msgItem = document.createElement('div');
       msgItem.className = `msg-item ${type}`;
 
+      const avatarSrc = (type === 'incoming') ? OHM_AVATAR_URL : FON_AVATAR_URL;
+      const avatarAlt = (type === 'incoming') ? 'Ohm' : 'Fon';
+
       msgItem.innerHTML = `
-        <div class="msg-bubble">${text}</div>
-        <div class="msg-time">${getTimeString()}</div>
+        <img class="chat-avatar-mini" src="${avatarSrc}" alt="${avatarAlt}" />
+        <div class="msg-content-wrapper">
+          <div class="msg-bubble">${text}</div>
+          <div class="msg-time">${getTimeString()}</div>
+        </div>
       `;
 
       chatList.insertBefore(msgItem, typing);
